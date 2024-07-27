@@ -1,43 +1,36 @@
-package com.sp.main;
+package com.sp.springJDBC.SpringJdbcCon.main;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-public class App1 {
+import com.sp.springJDBC.resource.JavaConfigFile;
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+public class App {
+
+    public static void main(String[] args) {
+
+
+//Generally we don't use this method we will provide this configure in the in the applicationContext.xml file
+        DriverManagerDataSource ds = new DriverManagerDataSource();
         String driverClass = "com.mysql.cj.jdbc.Driver";
-        String dbUrl = "jdbc:mysql://localhost:3306/mydb?useSSL=false";
+        String dbUr = "jdbc:mysql://localhost:3306/mydb?useSSL=false";
         String dbUsername = "root";
         String dbPassword = "Rooh@#2001";
-        Connection connection=null;
-        Class.forName(driverClass);
-        try {
-            connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-            connection.setAutoCommit(false);
-            PreparedStatement pt = connection.prepareStatement("insert into account values(?,?,?,?)");
-            pt.setInt(1, 454);
-            pt.setString(3, "Adsdsd");
-            pt.setString(2, "PASHWAN");
-            pt.setInt(4, 4545);
-            PreparedStatement pt2 = connection.prepareStatement("insert into account values('etetr'','KDFDF','FDF',34243)");
 
-            int count1 = pt.executeUpdate();
-            int count2 = pt2.executeUpdate();
-            if (count1 > 0 && count2 > 0) {
-                connection.commit();
-                System.out.println("Succesfully data inserted");
-            } else {
-                connection.rollback();
-                System.out.println("Failed data inserted");
+        ds.setDriverClassName(driverClass);
+        ds.setUrl(dbUrl);
+        ds.setUsername(dbUsername);
+        ds.setPassword(dbPassword);
 
-            }
-        } catch (Exception e  ) {
-            if (connection != null) ;
-            e.printStackTrace();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        }
-}
+
+        Connection con = jdbcTemplate.getDataSource().getConnection();
+        System.out.println("Connection successful!");
+        // You can use 'con' to perform database operations
+        // Remember to close the connection when done
+    }
 }
